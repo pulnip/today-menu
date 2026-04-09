@@ -19,5 +19,6 @@ jobs:
 
       - run: python main.py
         env:
+          PDF_TEMPLATE: ${{ secrets.PDF_TEMPLATE }}
           WEB_URL: ${{ secrets.WEB_URL }}
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}

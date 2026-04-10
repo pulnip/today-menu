@@ -20,6 +20,6 @@ jobs:
 
       - run: python main.py
         env:
-          PDF_TEMPLATE: ${{ secrets.PDF_TEMPLATE }}
-          WEB_URL: ${{ secrets.WEB_URL }}
+          PDF_NAME_TEMPLATE: ${{ vars.PDF_NAME_TEMPLATE }}
+          WEB_URL_PREFIX: ${{ vars.WEB_URL_PREFIX }}
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}

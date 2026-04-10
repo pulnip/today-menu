@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: '3.14'
 
-      - run: pip install dotenv pdfplumber requests
+      - run: pip install -r requirements.txt
 
       - run: python main.py
         env:

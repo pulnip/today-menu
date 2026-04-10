@@ -19,6 +19,7 @@ WEBHOOK_URL = os.environ["WEBHOOK_URL"]
 def get_menu_table(url: str):
     resp = requests.get(url)
     print(resp)
+    resp.raise_for_status()
 
     with pdfplumber.open(BytesIO(resp.content)) as pdf:
         table = pdf.pages[0].extract_table()
@@ -62,13 +63,22 @@ def post_to_chat(url: str, content: str):
         }
     )
 
-if __name__ == "__main__":
-    table = get_menu_table(url=WEB_URL)
-    menu = get_today_menu(table=table)
-    md = to_markdown_str(menu=menu)
+def run():
+    try:
+        table = get_menu_table(url=WEB_URL)
+        menu = get_today_menu(table=table)
+        md = to_markdown_str(menu=menu)
+    except requests.HTTPError:
+        md = "점심 메뉴를 찾을 수 없습니다. ㅠㅠ"
+    except Exception:
+        md = "처리 중 오류가 발생했습니다. ㅠㅠ"
 
     resp = post_to_chat(
         url=WEBHOOK_URL,
         content=md
     )
     print(resp)
+    return md
+
+if __name__ == "__main__":
+    run()

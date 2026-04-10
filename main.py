@@ -1,4 +1,5 @@
-from datetime import date, timedelta
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
 import os
 
@@ -6,7 +7,8 @@ import requests
 from io import BytesIO
 import pdfplumber
 
-today = date.today()
+KST = ZoneInfo("Asia/Seoul")
+today = datetime.now(KST).date()
 monday = today - timedelta(days=today.weekday())
 
 load_dotenv()

@@ -2,7 +2,8 @@ name: Send Lunch Menu
 
 on:
   schedule:
-    - cron: '30 3 * * 1-5'  # UTC 03:30 = KST 12:30, 평일만
+    - cron: '0 12 * * 1-5'
+      timezone: "Asia/Seoul"
   workflow_dispatch:
 
 jobs:

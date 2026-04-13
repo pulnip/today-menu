@@ -22,4 +22,5 @@ jobs:
         env:
           PDF_NAME_TEMPLATE: ${{ vars.PDF_NAME_TEMPLATE }}
           WEB_URL_PREFIX: ${{ vars.WEB_URL_PREFIX }}
+          AVATAR_URL: ${{ vars.AVATAR_URL }}
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}

@@ -10,14 +10,14 @@ import pdfplumber
 load_dotenv()
 WEBHOOK_URL = os.environ["WEBHOOK_URL"]
 
-def fetch_pdf(url_template: str) -> bytes:
+def fetch_pdf(url_template: str) -> tuple[bytes, str]:
     suffixes = ['~', '_']
     for s in suffixes:
         url = url_template.replace("{suffix}", s)
         resp = requests.get(url=url, timeout=10)
         if resp.status_code == 200:
             print(resp)
-            return resp.content
+            return resp.content, url
 
     raise FileNotFoundError
 
@@ -52,9 +52,10 @@ class DailyMenu:
             f"{self.b_side}\n"
         )
 
-    def to_discord_embed(self):
+    def to_discord_embed(self, url: str):
         return {
             "title": "오늘의 점심 메뉴를 알려드립니다.",
+            "url": url,
             "color": 0x3498DB,
             "fields": [
                 {
@@ -92,10 +93,31 @@ def pick_today(weekly: list[DailyMenu], today: date):
     return weekly[idx]
 
 def post_to_chat(url: str, content: str=None, embeds: list[dict]=None):
-    return requests.post(url, json = {
+    json = {
+        "avatar_url": os.environ["AVATAR_URL"],
         "content": content,
         "embeds": embeds
-    })
+    }
+
+    if embeds is not None:
+        json["poll"] = {
+            "question": {"text": "오늘의 점심 선택은?"},
+            "answers": [
+                {
+                    "poll_media": {
+                        "text": "A코스가 좋아요!"
+                    }
+                },
+                {
+                    "poll_media": {
+                        "text": "B코스가 좋아요!"
+                    }
+                }
+            ],
+            "duration": 4
+        }
+
+    return requests.post(url=url, json=json)
 
 def run(today: date=None):
     def _kst_today():
@@ -119,11 +141,11 @@ def run(today: date=None):
     embeds = None
 
     try:
-        pdf_bytes = fetch_pdf(url_template=url_template)
+        pdf_bytes, pdf_url = fetch_pdf(url_template=url_template)
         weekly = parse_weekly_table(table=extract_table(pdf_bytes=pdf_bytes))
         menu = pick_today(weekly=weekly, today=today)
         # md = menu.to_discord_md()
-        embeds = [menu.to_discord_embed()]
+        embeds = [menu.to_discord_embed(url=pdf_url)]
     except FileNotFoundError:
         content = "점심 메뉴를 찾을 수 없습니다. ㅠㅠ"
     except Exception:

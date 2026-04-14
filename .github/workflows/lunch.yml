@@ -1,9 +1,9 @@
 name: Send Lunch Menu
 
 on:
-  schedule:
-    - cron: '47 9 * * 1-5'
-      timezone: "Asia/Seoul"
+  # schedule:
+  #   - cron: '47 9 * * 1-5'
+  #     timezone: "Asia/Seoul"
   workflow_dispatch:
 
 jobs:

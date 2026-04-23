@@ -103,16 +103,9 @@ def post_to_chat(url: str, content: str=None, embeds: list[dict]=None):
         json["poll"] = {
             "question": {"text": "오늘의 점심 선택은?"},
             "answers": [
-                {
-                    "poll_media": {
-                        "text": "A코스가 좋아요!"
-                    }
-                },
-                {
-                    "poll_media": {
-                        "text": "B코스가 좋아요!"
-                    }
-                }
+                {"poll_media": {"text": "A코스가 좋아요!"}},
+                {"poll_media": {"text": "B코스가 좋아요!"}},
+                {"poll_media": {"text": "둘 다 별로...(나가서 먹기)"}}
             ],
             "duration": 4
         }

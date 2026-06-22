@@ -95,6 +95,16 @@ def pick_today(weekly: list[DailyMenu], today: date):
 
     return weekly[idx]
 
+POLL = {
+    "question": {"text": "오늘의 점심 선택은?"},
+    "answers": [
+        {"poll_media": {"text": "A코스가 좋아요!"}},
+        {"poll_media": {"text": "B코스가 좋아요!"}},
+        {"poll_media": {"text": "둘 다 별로...(나가서 먹기)"}}
+    ],
+    "duration": 4
+}
+
 def post_to_chat(url: str, content: str=None, embeds: list[dict]=None):
     json = {
         "avatar_url": os.environ["AVATAR_URL"],
@@ -103,15 +113,7 @@ def post_to_chat(url: str, content: str=None, embeds: list[dict]=None):
     }
 
     if embeds is not None:
-        json["poll"] = {
-            "question": {"text": "오늘의 점심 선택은?"},
-            "answers": [
-                {"poll_media": {"text": "A코스가 좋아요!"}},
-                {"poll_media": {"text": "B코스가 좋아요!"}},
-                {"poll_media": {"text": "둘 다 별로...(나가서 먹기)"}}
-            ],
-            "duration": 4
-        }
+        json["poll"] = POLL
 
     return requests.post(url=url, json=json)
 
@@ -148,12 +150,24 @@ def run(today: date=None):
         content = "처리 중 오류가 발생했습니다. ㅠㅠ"
 
     for webhook_url in WEBHOOK_URLS:
+        url = f"{webhook_url}?wait=true"
+
         resp = post_to_chat(
-            url=webhook_url,
+            url=url,
             content=content,
             embeds=embeds
         )
         print(resp)
+
+        if resp.ok and embeds and "poll" not in resp.json():
+            resp = requests.post(
+                url=url,
+                json={
+                    "avatar_url": os.environ["AVATAR_URL"],
+                    "poll": POLL
+                }
+            )
+            print(f"투표 재전송 결과 {resp}")
     return content
 
 if __name__ == "__main__":

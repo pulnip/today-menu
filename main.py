@@ -8,7 +8,10 @@ from io import BytesIO
 import pdfplumber
 
 load_dotenv()
-WEBHOOK_URL = os.environ["WEBHOOK_URL"]
+WEBHOOK_URLS = [
+    os.environ["WEBHOOK_URL"],
+    os.environ["WEBHOOK_URL1"]
+]
 
 def fetch_pdf(url_template: str) -> tuple[bytes, str]:
     suffixes = ['~', '_']
@@ -144,12 +147,13 @@ def run(today: date=None):
     except Exception:
         content = "처리 중 오류가 발생했습니다. ㅠㅠ"
 
-    resp = post_to_chat(
-        url=WEBHOOK_URL,
-        content=content,
-        embeds=embeds
-    )
-    print(resp)
+    for webhook_url in WEBHOOK_URLS:
+        resp = post_to_chat(
+            url=webhook_url,
+            content=content,
+            embeds=embeds
+        )
+        print(resp)
     return content
 
 if __name__ == "__main__":

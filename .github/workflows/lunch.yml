@@ -24,3 +24,4 @@ jobs:
           WEB_URL_PREFIX: ${{ vars.WEB_URL_PREFIX }}
           AVATAR_URL: ${{ vars.AVATAR_URL }}
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+          WEBHOOK_URL1: ${{ secrets.WEBHOOK_URL1 }}
